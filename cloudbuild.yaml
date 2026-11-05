@@ -1,0 +1,41 @@
+steps:
+  # Step 1: Pull the previous image to use as cache (fails silently if first build)
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        docker pull europe-west1-docker.pkg.dev/YOUR_GCP_PROJECT/cloud-run-source-deploy/voice-agent:latest || true
+
+  # Step 2: Build using cached layers
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--cache-from=europe-west1-docker.pkg.dev/YOUR_GCP_PROJECT/cloud-run-source-deploy/voice-agent:latest'
+      - '-t'
+      - 'europe-west1-docker.pkg.dev/YOUR_GCP_PROJECT/cloud-run-source-deploy/voice-agent:$COMMIT_SHA'
+      - '-t'
+      - 'europe-west1-docker.pkg.dev/YOUR_GCP_PROJECT/cloud-run-source-deploy/voice-agent:latest'
+      - '.'
+
+  # Step 3: Push both tags (latest enables future cache hits)
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '--all-tags'
+      - 'europe-west1-docker.pkg.dev/YOUR_GCP_PROJECT/cloud-run-source-deploy/voice-agent'
+
+  # Step 4: Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'voice-agent'
+      - '--image=europe-west1-docker.pkg.dev/YOUR_GCP_PROJECT/cloud-run-source-deploy/voice-agent:$COMMIT_SHA'
+      - '--platform=managed'
+      - '--region=europe-west1'
+      - '--quiet'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

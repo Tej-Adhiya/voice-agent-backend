@@ -1,0 +1,26 @@
+SAMPLE RESTAURANT MENU
+Allergens: 1=Gluten 2=Crustaceans 3=Eggs 4=Fish 5=Peanuts 6=Soy 7=Milk 8=Nuts 9=Celery 10=Mustard 11=Sesame 12=Sulphur 13=Lupin 14=Molluscs
+
+== DINNER MENU ==
+
+STARTERS
+House Salad €12 [10,12] - Mixed leaves, cherry tomatoes, mustard vinaigrette
+Burrata €15 [7] - Heirloom tomatoes, basil oil
+Tuna Tartare €18 [4,6,11] - Avocado, sesame, soy dressing
+
+PASTA
+Tagliatelle Pomodoro €16 [1,3] - Slow-cooked tomato sauce, basil
+Mushroom Risotto €19 [7,12] - Wild mushrooms, parmesan
+
+MAINS
+Grilled Salmon €26 [4] - Seasonal vegetables, lemon butter
+Roast Chicken €24 [7,9] - Thyme jus, roasted potatoes
+Vegan Buddha Bowl €17 [6,11] - Quinoa, roasted vegetables, tahini
+
+DESSERTS
+Tiramisu €9 [1,3,7] - Espresso, mascarpone
+Dark Chocolate Tart €10 [1,3,7,8] - Hazelnut, sea salt
+
+DRINKS
+House Lemonade €5 - Fresh lemon, mint
+Espresso €3 - Single origin

@@ -1,0 +1,273 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "check_availability",
+      "description": "Check if a date and time slot is available for an appointment. Call this before creating an appointment.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "vapi_call_id": {
+            "type": "string",
+            "description": "The current Vapi call ID"
+          },
+          "preferred_date": {
+            "type": "string",
+            "description": "The requested date in YYYY-MM-DD format e.g. 2026-06-10"
+          },
+          "preferred_time": {
+            "type": "string",
+            "description": "The requested time in HH:MM format e.g. 14:00"
+          },
+          "party_size": {
+            "type": "integer",
+            "description": "Number of guests (optional, defaults to 2)"
+          },
+          "appointment_id": {
+            "type": "string",
+            "description": "The ID or reference code of the existing appointment to modify/reschedule (optional, used to disregard the current booking's table from availability checks when rescheduling)."
+          }
+        },
+        "required": ["vapi_call_id", "preferred_date", "preferred_time"]
+      }
+    },
+    "server": { "url": "https://YOUR-SERVICE-URL/tools/check_availability" }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "create_appointment",
+      "description": "Save a new appointment after collecting all details from the caller and confirming them back.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "vapi_call_id": {
+            "type": "string",
+            "description": "The current Vapi call ID"
+          },
+          "guest_name": {
+            "type": "string",
+            "description": "Full name of the caller"
+          },
+          "guest_phone": {
+            "type": "string",
+            "description": "Callback phone number"
+          },
+          "guest_email": {
+            "type": "string",
+            "description": "Email address if provided"
+          },
+          "service": {
+            "type": "string",
+            "description": "Type of appointment or service requested"
+          },
+          "preferred_date": {
+            "type": "string",
+            "description": "Requested date in YYYY-MM-DD format"
+          },
+          "preferred_time": {
+            "type": "string",
+            "description": "Requested time in HH:MM format"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Any special requests or additional notes"
+          },
+          "party_size": {
+            "type": "integer",
+            "description": "Number of guests"
+          }
+        },
+        "required": ["vapi_call_id", "guest_name", "preferred_date", "preferred_time", "party_size"]
+      }
+    },
+    "server": { "url": "https://YOUR-SERVICE-URL/tools/create_appointment" }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "modify_appointment",
+      "description": "Reschedule or update an existing appointment.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "vapi_call_id": {
+            "type": "string",
+            "description": "The current Vapi call ID"
+          },
+          "appointment_id": {
+            "type": "string",
+            "description": "The UUID, SevenRooms ID, or Reference Code of the appointment to modify"
+          },
+          "changes": {
+            "type": "object",
+            "description": "Only the fields to update",
+            "properties": {
+              "notes": {
+                "type": "string",
+                "description": "Updated notes"
+              },
+              "service": {
+                "type": "string",
+                "description": "Updated service type"
+              },
+              "preferred_date": {
+                "type": "string",
+                "description": "New date in YYYY-MM-DD format"
+              },
+              "preferred_time": {
+                "type": "string",
+                "description": "New time in HH:MM format"
+              },
+              "party_size": {
+                "type": "integer",
+                "description": "Updated number of guests"
+              }
+            }
+          }
+        },
+        "required": ["vapi_call_id", "appointment_id", "changes"]
+      }
+    },
+    "server": { "url": "https://YOUR-SERVICE-URL/tools/modify_appointment" }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "cancel_appointment",
+      "description": "Cancel an existing appointment. Always confirm with the caller before calling this.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "vapi_call_id": {
+            "type": "string",
+            "description": "The current Vapi call ID"
+          },
+          "appointment_id": {
+            "type": "string",
+            "description": "The UUID of the appointment to cancel"
+          }
+        },
+        "required": ["vapi_call_id", "appointment_id"]
+      }
+    },
+    "server": { "url": "https://YOUR-SERVICE-URL/tools/cancel_appointment" }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_guest_profile",
+      "description": "Look up the caller's active reservation by phone number or name. Call this at the start of any modify or cancel flow — the system resolves the caller's number automatically. Returns: found (bool), multiple_bookings (bool), and either a single booking's details or a bookings[] array when the guest has more than one upcoming reservation. If multiple_bookings=true, you MUST read back each booking's date and time and ask the caller which one they mean before taking any action.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string",
+            "description": "The phone number of the customer (optional; if not provided, the caller's current number is automatically resolved)."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the customer (optional; used if looking up by name instead of phone)."
+          }
+        },
+        "required": []
+      }
+    },
+    "server": { "url": "https://YOUR-SERVICE-URL/tools/get_guest_profile" }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "add_to_cancellation_list",
+      "description": "Add the guest to the restaurant's waitlist / cancellation list when the requested time slot has no availability.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "guest_name": {
+            "type": "string",
+            "description": "The full name of the guest."
+          },
+          "guest_phone": {
+            "type": "string",
+            "description": "The phone number of the guest (preferably including country code)."
+          },
+          "guest_email": {
+            "type": "string",
+            "description": "The email address of the guest (optional)."
+          },
+          "party_size": {
+            "type": "integer",
+            "description": "The party size (number of guests)."
+          },
+          "preferred_date": {
+            "type": "string",
+            "description": "The date in YYYY-MM-DD format."
+          },
+          "preferred_time": {
+            "type": "string",
+            "description": "The time in HH:MM format."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Any special requests or notes (optional)."
+          }
+        },
+        "required": ["guest_name", "guest_phone", "party_size", "preferred_date", "preferred_time"]
+      }
+    },
+    "server": { "url": "https://YOUR-SERVICE-URL/tools/add_to_cancellation_list" }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "route_transfer",
+      "description": "Resolve the correct staff phone number to transfer the call to based on the escalation reason (e.g. complaint, private_event, group_booking, lost_and_found, supplier, etc.).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "The reason for the transfer. You MUST use one of these exact strings — do not invent others: 'reservation_issue' (booking not found or cannot be modified/cancelled), 'group_booking' (party of more than 10), 'private_event' (buyout, corporate dining, private room, events), 'press' (press, media, influencer), 'supplier' (supplier or delivery driver), 'job_application' (job applications or CVs), 'complaint' (any complaint), 'lost_and_found' (lost property), 'allergy' (allergy or dietary queries beyond basics), 'gift_voucher' (gift voucher purchases), 'corporate_invoice' (corporate accounts or invoices), 'takeaway' (takeaway, delivery, or ordering issues), any configured partner-venue key (transfer to that venue), 'default' (anything else)."
+          }
+        },
+        "required": ["reason"]
+      }
+    },
+    "server": { "url": "https://YOUR-SERVICE-URL/tools/route_transfer" }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_menu_recommendations",
+      "description": "Retrieve menu recommendations based on optional category, search query (like vegan or specific dish names), or allergens to exclude.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Optional category filter. Allowed values: 'starters', 'pasta', 'mains', 'sides', 'desserts', 'drinks', 'wine', 'food'."
+          },
+          "exclude_allergens": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of allergen names or numbers to exclude (e.g. ['Gluten', 'Milk', 'Nuts', '8'])."
+          },
+          "search_query": {
+            "type": "string",
+            "description": "Optional keyword search query (e.g. 'vegan', 'truffle', 'chicken')."
+          }
+        }
+      }
+    },
+    "server": { "url": "https://YOUR-SERVICE-URL/tools/get_menu_recommendations" }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "endCall",
+      "description": "End the call. Call this immediately after saying goodbye or ending the call."
+    }
+  }
+]
